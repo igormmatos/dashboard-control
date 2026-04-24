@@ -1,0 +1,41 @@
+Você é um Engenheiro de Software Full-Stack Sênior, especialista em Laravel 11, PHP 8.2+, MySQL 8, Blade e Tailwind CSS.
+
+**OBJETIVO**
+Eu tenho a ideia visual e os requisitos de um Dashboard de Gestão de Acordos Trabalhistas. O aplicativo deve ser um sistema monolítico clássico em **Laravel 11**. Todo o front-end deverá obrigatoriamente utilizar **views em Blade (.blade.php)** estilizadas com **Tailwind CSS** puro. NENHUM framework JavaScript reativo pesado (como React ou Vue) deve ser utilizado; modais e interações de tela devem usar JavaScript Vanilla ou Alpine.js (preferencialmente Alpine.js integrado ao ecossistema Laravel).
+
+**CONTEXTO E REQUISITOS (PRD)**
+- **Stack:** Laravel 11, PHP 8.2+, MySQL 8, Blade, Tailwind CSS, Alpine.js.
+- O sistema é o controle central de pagamentos de acordos trabalhistas, divididos em parcelas (installments).
+- Cálculos pesados ("Total em Atraso", "Vencendo em 3 Dias", "Pagas no Mês") devem ser processados primariamente no banco via Queries Eloquent nos Controllers e passados para as Views.
+- Apenas parcelas com `is_active = true` e status diferente de Cancelado/Encerrado aparecem em listas de "atraso/a vencer".
+
+**ESTRUTURA DO BANCO DE DADOS (Diagrama Base)**
+- `users`: id, name, email, role.
+- `clients`: id, name, status, cnpj, address, contact_name, phone, email.
+- `workers`: id, name.
+- `processes`: id, process_number.
+- `agreements`: id, client_id, worker_id, process_id, total_amount, status.
+- `installments`: id, agreement_id, installment_number, amount, due_date, paid_date, status, is_active.
+- `audit_logs`: id, user_id, action, entity_type, entity_id.
+
+**PLANO DE EXECUÇÃO (Passo a Passo rigoroso da migração):**
+
+1. **Migrations & Models:** 
+   - Crie a estrutura de criação das tabelas acima.
+   - Crie os Models definindo os relacionamentos lógicos (ex: Um Acordo *belongsTo* Cliente; *hasMany* Parcelas).
+   - Inclua Scopes Lógicos no Model `Installment` que filtrem rapidamente: `scopeOverdue($query)`, `scopeDueInDays($query, $days)`.
+   
+2. **Rotas e Controllers:**
+   - Crie o scaffold de rotas (`web.php`) e Controllers para: `DashboardController`, `AgreementController`, `ClientController`, `InstallmentController`.
+   - Implemente o método `index()` do `DashboardController` assegurando o Eager Loading (com relacionamentos nested para Cliente e Processo) para evitar problema N+1 ao popular a página inicial.
+   
+3. **Views (Arquitetura Blade):**
+   - Construa um arquivo de formatação mestre (ex: `layouts/app.blade.php`) com uma barra de navegação lateral (Sidebar responsiva).
+   - Crie a view `dashboard.blade.php`. Nela, construa com Tailwind CSS os cartões de estatísticas no topo (Total em Atraso, Recebido mês, A vencer) e abaixo crie uma `<table class="... Tailwind ...">` para exibir as parcelas urgentes (iterando um `@foreach($urgentInstallments as $installment)`).
+   
+4. **Interatividade (Componentes UI):**
+   - Para elementos estáticos e grids, use diretivas do Blade (`@if`, `@foreach`).
+   - Para modais (como visualizar os detalhes extras de uma parcela ou acordo), use *x-data* do Alpine.js ocultando e exibindo uma *div* absoluta/posicionada.
+
+**PRÓXIMO PASSO:**
+Leia com atenção este contexto. Para iniciarmos sem confusão, primeiro gere os arquivos das **Migrations** e as classes **Models**, priorizando que os relacionamentos estão fechados corretamente de modo a puxar do banco: Parcela -> Acordo -> Trabalhador/Processo/Cliente. Após me entregar isso, avançaremos para as Rotas, Controllers e as views em Blade.

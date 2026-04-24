@@ -1,0 +1,242 @@
+1. Visão Geral e Propósito
+
+Este dashboard visa concentrar, em uma única tela operacional, a situação atual dos acordos trabalhistas parcelados, destacando:
+
+parcelas em atraso e vencendo em até 3 dias;
+visão do mês selecionado (por data de vencimento), incluindo a vencer e pagas no mês;
+lista específica de acordos descumpridos/encerrados sem quitação.
+
+O dashboard deve reduzir o tempo de conferência e cobrança, permitindo priorização por risco (valor e tempo de atraso) e acesso rápido ao detalhe do acordo.
+
+2. Público-Alvo
+Admin e Advogada (ambas com acesso total no MVP).
+Uso principal: web responsivo com foco em celular.
+3. Requisitos Funcionais
+ID	Nome do Requisito	Descrição (User Story)	Prioridade
+RF001	Dashboard como tela inicial	Como usuária, eu quero que o dashboard seja a primeira tela após login, para iniciar o acompanhamento diário sem navegação extra.	Must-have
+RF002	Seletor de mês (baseado em vencimento)	Como usuária, eu quero selecionar um mês/ano, para o dashboard filtrar informações do “mês” pela data de vencimento das parcelas.	Must-have
+RF003	Cards de indicadores do mês	Como usuária, eu quero ver cards com totais do mês selecionado (quantidade e valor de parcelas a vencer no mês; quantidade e valor de parcelas pagas no mês), para entender o fluxo do período.	Must-have
+RF004	Card de “valor total em atraso” (atual)	Como usuária, eu quero ver o valor total em atraso (soma das parcelas Em atraso, ativas e não pagas), para medir o risco imediato.	Must-have
+RF005	Lista “Vencendo em 3 dias”	Como usuária, eu quero ver uma lista de parcelas que vencem em até 3 dias (ativas e não pagas), para agir antes de virar atraso.	Must-have
+RF006	Lista “Parcelas em atraso”	Como usuária, eu quero ver uma lista de parcelas em atraso (ativas e não pagas), para priorizar cobrança e renegociação.	Must-have
+RF007	Lista “Acordos com atraso”	Como usuária, eu quero ver a lista de acordos com status geral “Com atraso”, para enxergar o problema por caso.	Must-have
+RF008	Lista “Acordos descumpridos”	Como usuária, eu quero ver uma lista de acordos marcados como “Descumprido/Encerrado sem quitação”, para separar o que virou histórico/contencioso do operacional normal.	Must-have
+RF009	Drill-down para o acordo	Como usuária, eu quero clicar em um item do dashboard (parcela ou acordo) e ir para a tela de detalhe do acordo, para resolver sem perder tempo.	Must-have
+RF010	Busca rápida no dashboard	Como usuária, eu quero buscar por nome do cliente, nome do trabalhador ou número do processo, para localizar um acordo rapidamente a partir do dashboard.	Must-have
+RF011	Colunas mínimas nas listas	Como usuária, eu quero que as listas exibam no mínimo: cliente, trabalhador, nº processo, nº parcela (quando aplicável), vencimento, valor, status, para tomada de decisão sem abrir tudo.	Must-have
+RF012	Ordenação por prioridade	Como usuária, eu quero ordenar listas por critérios (ex.: atraso mais antigo primeiro e/ou maior valor primeiro), para priorizar atuação.	Must-have
+RF013	Filtros rápidos por status (listas)	Como usuária, eu quero aplicar filtros rápidos nas listas (ex.: somente “Em atraso”, somente “A vencer”, somente “Pagas no mês”), para focar no que interessa.	Must-have
+RF014	Exportação CSV das listas	Como usuária, eu quero exportar em CSV as listas do dashboard respeitando filtros e período, para análise e registro.	Must-have
+RF015	Atualização automática refletida	Como usuária, eu quero que o dashboard reflita a atualização automática de parcelas “Em atraso” sem depender de ação manual, para confiar que a tela representa a realidade.	Must-have
+RF016	Ranking “maior saldo em aberto”	Como usuária, eu quero ver um ranking de acordos por maior saldo em aberto, para identificar maior risco financeiro.	Nice-to-have
+RF017	Gráfico simples mensal	Como usuária, eu quero um gráfico simples por mês (ex.: total pago vs total em atraso), para enxergar tendência.	Nice-to-have
+Exportar
+Copiar
+4. Requisitos Não Funcionais
+
+Segurança
+
+O dashboard deve exigir autenticação e respeitar autorização por perfil.
+A exportação CSV deve ser permitida apenas para usuário autenticado e deve registrar auditoria do evento (quem exportou, quando e qual filtro/período).
+
+Desempenho
+
+O dashboard deve carregar em até 3 segundos em condições normais.
+Listas devem ter paginação (ou limite por página) para manter uso fluido no celular.
+
+Usabilidade
+
+A interface deve ser responsiva e funcional em smartphone.
+Datas devem ser exibidas em dd/mm/aaaa e valores em R$ com 2 casas decimais.
+
+Confiabilidade / Regras de cálculo
+
+“Valor total em atraso” deve ser calculado como soma de parcelas com status Em atraso, ativas, sem pagamento.
+Parcelas com status Cancelado/Encerrado ou cronograma inativo não devem aparecer em listas operacionais (Vencendo em 3 dias / Em atraso / Mês atual).
+O “mês selecionado” deve considerar o mês/ano pela data de vencimento.
+
+Compatibilidade
+
+Compatível com versões atuais de Chrome, Edge e Safari (incluindo iOS).
+
+Pilha Tecnológica (Tech Stack)
+
+Backend: PHP 8.2+
+Framework: Laravel 11
+Banco de Dados: MySQL 8
+Frontend: Blade + Bootstrap 5 (ou Tailwind CSS)
+5. Escopo Negativo
+
+Não será implementado nesta fase do dashboard:
+
+Notificações externas (WhatsApp/e-mail/SMS).
+Upload/anexo de comprovantes.
+Cálculo de juros/multa/correção.
+Importação da planilha.
+BI avançado (dashboards complexos, múltiplos gráficos, cubos, etc.).
+6. Métricas de Sucesso
+Tempo para identificar ação do dia (ver “em atraso” + “vencendo em 3 dias”): ≤ 30 segundos.
+Navegação para detalhe: acessar o acordo a partir do dashboard em ≤ 2 cliques.
+Acurácia: 0 divergências em amostragem (valor em atraso do dashboard = soma das parcelas em atraso no banco).
+Uso recorrente: dashboard acessado em ≥ 15 dias/mês.
+7. Seção de Vibe Coding (Prompt Requirements)
+7.1. Mockup do Esquema do Banco de Dados (Mermaid)
+Exportar
+
+registra
+
+possui
+
+envolve
+
+vincula
+
+contém
+
+USERS
+
+int
+
+id
+
+string
+
+name
+
+string
+
+email
+
+string
+
+role
+
+AUDIT_LOGS
+
+int
+
+id
+
+int
+
+user_id
+
+string
+
+action
+
+string
+
+entity_type
+
+int
+
+entity_id
+
+datetime
+
+created_at
+
+CLIENTS
+
+int
+
+id
+
+string
+
+name
+
+AGREEMENTS
+
+int
+
+id
+
+int
+
+client_id
+
+int
+
+worker_id
+
+int
+
+process_id
+
+decimal
+
+total_amount
+
+string
+
+status
+
+WORKERS
+
+int
+
+id
+
+string
+
+name
+
+PROCESSES
+
+int
+
+id
+
+string
+
+process_number
+
+INSTALLMENTS
+
+int
+
+id
+
+int
+
+agreement_id
+
+int
+
+installment_number
+
+decimal
+
+amount
+
+date
+
+due_date
+
+date
+
+paid_date
+
+string
+
+status
+
+bool
+
+is_active
+
+7.2. Guardrails (Proteções)
+A IA de desenvolvimento deve implementar somente os requisitos deste PRD do dashboard; não deve criar funcionalidades fora do escopo (notificações externas, anexos, juros/correção, importação).
+Todas as agregações (totais e contagens) do dashboard devem ser derivadas diretamente das parcelas e seus status, evitando campos calculados “soltos” que possam divergir.
+As consultas do dashboard devem excluir parcelas inativas e/ou Cancelado/Encerrado das listas operacionais.
+O filtro de “mês selecionado” deve ser aplicado por due_date (data de vencimento).
+Exportação CSV deve refletir exatamente o que está filtrado na tela (mesmas regras/mesmo período) e registrar auditoria da exportação.
+Deve usar proteções padrão do Laravel contra CSRF/XSS e evitar SQL injection (usar Eloquent/Query Builder).
+Deve haver paginação nas listas para garantir desempenho.
+7.3. Sugestão de Repositório
+Repository Name: acordos-dashboard-laravel
+Repository Description: Dashboard web em Laravel + MySQL para visão operacional de acordos e parcelas (mês por vencimento, vencendo em 3 dias, atrasos, acordos descumpridos, busca, ordenação e exportação CSV).
+
+Se quiser, eu também transformo este PRD em uma lista de widgets do dashboard (nome do widget, query/filtro esperado e colunas exibidas) para reduzir ambiguidades na implementação.
